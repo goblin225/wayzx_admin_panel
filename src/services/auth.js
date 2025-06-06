@@ -1,7 +1,7 @@
 import api from './api';
 import { jwtDecode } from 'jwt-decode';
 
-export const loginStore = async (credentials) => {
+export const authLogin = async (credentials) => {
   const response = await api.post('/auth/login', credentials);
 
   return {

@@ -17,6 +17,9 @@ import Bookings from "../pages/Bookings";
 import UserManagement from "../pages/UserManagement";
 import Rooms from "../pages/Rooms";
 import SpaceType from "../pages/SpaceType";
+import Coupons from "../pages/Coupons";
+import Reward from "../pages/Reward";
+import RewardHistory from "../pages/RewardHistory";
 
 const AppRoutes = () => (
     <BrowserRouter>
@@ -36,6 +39,9 @@ const AppRoutes = () => (
                         <Route path="/room" element={<Rooms />} />
                         <Route path="/users" element={<UserManagement />} />
                         <Route path="/spacetype" element={<SpaceType />} />
+                        <Route path="/coupons" element={<Coupons />} />
+                        <Route path="/reward" element={<Reward />} />
+                        <Route path="/reward-history/:userId" element={<RewardHistory />} />
                     </Route>
                 </Route>
                 <Route path="*" element={<NotFound />} />

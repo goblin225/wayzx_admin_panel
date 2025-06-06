@@ -4,8 +4,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Building,
-  LayoutDashboard,Calendar,
-  Users,
+  LayoutDashboard, Calendar,
+  Users, BadgePercent,Gift
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -121,11 +121,12 @@ const Sidebar = ({ className }) => {
         </NavGroup>
 
         <NavGroup title="Management" isCollapsed={isCollapsed}>
-          {/* <NavItem to="/role" icon={LockKeyhole} label="Role Management" isCollapsed={isCollapsed} /> */}
           <NavItem to="/users" icon={Users} label="Users & Customers" isCollapsed={isCollapsed} />
           <NavItem to="/room" icon={Building} label="Rooms" isCollapsed={isCollapsed} />
           <NavItem to="/booking" icon={Calendar} label="Bookings" isCollapsed={isCollapsed} />
           <NavItem to="/spacetype" icon={Building} label="Space Type" isCollapsed={isCollapsed} />
+          <NavItem to="/coupons" icon={BadgePercent} label="Coupons" isCollapsed={isCollapsed} />
+          <NavItem to="/reward" icon={Gift} label="Reward System" isCollapsed={isCollapsed} />
         </NavGroup>
 
         {!isCollapsed && <Separator className="my-2" />}

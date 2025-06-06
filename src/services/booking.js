@@ -5,7 +5,11 @@ export const createBooking = async () => {
 };
 
 export const getAllBookings = async () => {
-    const res = await api.get('/booking/getAllBookings');
-    return res.data;
-  };
-  
+  const res = await api.get('/booking/getAllBookings');
+  return res.data;
+};
+
+export const deleteBookings = async (bookingId) => {
+  const res = await api.delete(`/booking/deleteBooking/${bookingId}`);
+  return res.data;
+};

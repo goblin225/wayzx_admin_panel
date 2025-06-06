@@ -77,7 +77,16 @@ const Rooms = () => {
             capacity: '',
             currency: currencyOptions[0],
             imageUrl: '',
-            amenities: []
+            amenities: [],
+            openingHours: {
+                monday: { open: '', close: '' },
+                tuesday: { open: '', close: '' },
+                wednesday: { open: '', close: '' },
+                thursday: { open: '', close: '' },
+                friday: { open: '', close: '' },
+                saturday: { open: '', close: '' },
+                sunday: { open: '', close: '' },
+            }
         },
     });
 
@@ -96,7 +105,16 @@ const Rooms = () => {
             capacity: '',
             currency: currencyOptions[0],
             imageUrl: '',
-            amenities: []
+            amenities: [],
+            openingHours: {
+                monday: { open: '', close: '' },
+                tuesday: { open: '', close: '' },
+                wednesday: { open: '', close: '' },
+                thursday: { open: '', close: '' },
+                friday: { open: '', close: '' },
+                saturday: { open: '', close: '' },
+                sunday: { open: '', close: '' },
+            }
         });
         setIsEditing(false);
         setSelectedRoom(null);
@@ -191,6 +209,7 @@ const Rooms = () => {
                 location: data.location.trim(),
                 pricePerHour: pricePerHour,
                 capacity: data.capacity,
+                roomSize: data.roomSize,
                 currency: data.currency,
                 spaceTypeId: data.spaceTypeId,
                 imageUrl: data.imageUrl.trim(),
@@ -201,10 +220,17 @@ const Rooms = () => {
                         isFree: amenity.isFree || false,
                         price: amenity.isFree ? '0' : String(amenity.price).trim(),
                         imageUrl: amenity.imageUrl.trim()
-                    }))
+                    })),
+                openingHours: data?.openingHours ?? {
+                    monday: { open: '', close: '' },
+                    tuesday: { open: '', close: '' },
+                    wednesday: { open: '', close: '' },
+                    thursday: { open: '', close: '' },
+                    friday: { open: '', close: '' },
+                    saturday: { open: '', close: '' },
+                    sunday: { open: '', close: '' },
+                },
             };
-
-            console.log('Room Data:', roomData);
 
             let response;
             if (isEditing && selectedRoom) {
@@ -367,7 +393,7 @@ const Rooms = () => {
                                             <FormControl>
                                                 <Input
                                                     {...field}
-                                                    placeholder="Conference Room A"
+                                                    placeholder="e.g Conference Room A"
                                                     required
                                                 />
                                             </FormControl>
@@ -403,7 +429,7 @@ const Rooms = () => {
                                             <FormControl>
                                                 <Input
                                                     {...field}
-                                                    placeholder="Spacious meeting room with projector"
+                                                    placeholder="e.g Spacious meeting room with projector"
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -446,6 +472,29 @@ const Rooms = () => {
                                                     type="number"
                                                     min="1"
                                                     placeholder="10"
+                                                    onChange={(e) => {
+                                                        const value = e.target.value;
+                                                        field.onChange(value === "" ? "" : Number(value));
+                                                    }}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="roomSize"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Room Size*</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    {...field}
+                                                    type="number"
+                                                    min="1"
+                                                    placeholder="0"
                                                     onChange={(e) => {
                                                         const value = e.target.value;
                                                         field.onChange(value === "" ? "" : Number(value));
@@ -554,6 +603,45 @@ const Rooms = () => {
                                                 />
                                             </div>
                                         )}
+                                    </div>
+                                </div>
+
+                                <div className="space-y-4 md:col-span-2">
+                                    <Label className="text-base font-semibold">Opening Hours</Label>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'].map((day) => (
+                                            <div key={day} className="border rounded-md p-3 bg-gray-50">
+                                                <p className="capitalize font-medium mb-2">{day}</p>
+                                                <div className="flex gap-4">
+                                                    <FormField
+                                                        control={form.control}
+                                                        name={`openingHours.${day}.open`}
+                                                        render={({ field }) => (
+                                                            <FormItem className="flex-1">
+                                                                <FormLabel>Open</FormLabel>
+                                                                <FormControl>
+                                                                    <Input type="time" {...field} />
+                                                                </FormControl>
+                                                                <FormMessage />
+                                                            </FormItem>
+                                                        )}
+                                                    />
+                                                    <FormField
+                                                        control={form.control}
+                                                        name={`openingHours.${day}.close`}
+                                                        render={({ field }) => (
+                                                            <FormItem className="flex-1">
+                                                                <FormLabel>Close</FormLabel>
+                                                                <FormControl>
+                                                                    <Input type="time" {...field} />
+                                                                </FormControl>
+                                                                <FormMessage />
+                                                            </FormItem>
+                                                        )}
+                                                    />
+                                                </div>
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
 
@@ -672,6 +760,7 @@ const Rooms = () => {
                                                         )}
                                                     />
                                                 </div>
+
                                                 <Button
                                                     type="button"
                                                     variant="ghost"
@@ -774,41 +863,68 @@ const Rooms = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-4">
                                 <div>
-                                    <Label>Name</Label>
-                                    <p className="font-medium">{selectedRoom.name}</p>
+                                    <Label className="font-bold">Name</Label>
+                                    <p>{selectedRoom.name}</p>
                                 </div>
                                 <div>
-                                    <Label>Description</Label>
-                                    <p className="font-medium">{selectedRoom.description}</p>
+                                    <Label className="font-bold">Description</Label>
+                                    <p>{selectedRoom.description}</p>
                                 </div>
                                 <div>
-                                    <Label>Location</Label>
-                                    <p className="font-medium">{selectedRoom.location}</p>
+                                    <Label className="font-bold">Location</Label>
+                                    <p>{selectedRoom.location}</p>
                                 </div>
-                                <div>
-                                    <Label>Price Per Hour</Label>
-                                    <p className="font-medium">
-                                        {selectedRoom.currency?.symbol || '₹'}
-                                        {selectedRoom.pricePerHour}
-                                    </p>
+                                <div className='flex gap-10'>
+                                    <div>
+                                        <Label className="font-bold">Price Per Hour</Label>
+                                        <p>
+                                            {selectedRoom.currency?.symbol || '₹'}
+                                            {selectedRoom.pricePerHour}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <Label className="font-bold">Capacity</Label>
+                                        <p>
+                                            {selectedRoom.capacity}
+                                        </p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <Label>Capacity</Label>
-                                    <p className="font-medium">
-                                        {selectedRoom.capacity}
-                                    </p>
+                                <div className='flex gap-10'>
+                                    <div>
+                                        <Label className="font-bold">Room Slot</Label>
+                                        <p>
+                                            {selectedRoom?.roomSize}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <Label className="font-bold">Space Type</Label>
+                                        <p>
+                                            {selectedRoom?.spaceTypeId?.name}
+                                        </p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <Label>Space Type</Label>
-                                    <p className="font-medium">
-                                        {selectedRoom?.spaceTypeId?.name}
-                                    </p>
+                                <div className="space-y-4 md:col-span-2">
+                                    <div>
+                                        <Label className="text-base font-bold">Opening Hours</Label>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                                            {Object.entries(selectedRoom.openingHours || {}).map(([day, time], idx) => (
+                                                <div key={idx} className="border p-3 rounded-md bg-gray-50">
+                                                    <p className="capitalize font-medium">{day}</p>
+                                                    <p className="text-sm text-muted-foreground">
+                                                        {time.open && time.close
+                                                            ? `${time.open} - ${time.close}`
+                                                            : 'Closed'}
+                                                    </p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
                             <div className="space-y-4">
                                 <div>
-                                    <Label>Room Image</Label>
+                                    <Label className="font-bold">Room Image</Label>
                                     <img
                                         src={selectedRoom?.imageUrl || '/default-room.png'}
                                         alt={selectedRoom?.name}
@@ -816,7 +932,7 @@ const Rooms = () => {
                                     />
                                 </div>
                                 <div>
-                                    <Label>Amenities</Label>
+                                    <Label className="font-bold">Amenities</Label>
                                     {selectedRoom?.amenities?.some(item => item.isFree) && (
                                         <div className="mt-4">
                                             <h4 className="text-sm font-medium mb-2">Free Amenities</h4>

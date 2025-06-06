@@ -123,12 +123,19 @@ const SpaceType = () => {
             header: 'Allowed Slots',
             accessor: 'allowedSlots',
             Cell: ({ value }) => (
-                <span className="text-blue-600">
+                <span className="text-blue-600 truncate">
                     {Array.isArray(value) ? value.join(', ') : ''}
                 </span>
             )
         },
-        { header: 'Bookings Count', accessor: 'bookingsCount' },
+        {
+            header: 'Bookings Count', accessor: 'bookingsCount',
+            cell: (row) => (
+                <span className="text-gray-600">
+                    {row?.bookingsCount || 'No bookings'}
+                </span>
+            )
+        },
         {
             header: 'Status',
             accessor: 'isActive',
